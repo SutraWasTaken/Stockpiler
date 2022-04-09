@@ -420,6 +420,8 @@ def Learn(LearnInt, image):
 			Found = False
 			for imagefile in os.listdir(folder):
 				checkimage = cv2.imread(folder + imagefile, cv2.IMREAD_GRAYSCALE)
+				if checkimage.shape[0] > currenticon.shape[0] or checkimage.shape[1] > currenticon.shape[1]:
+					continue
 				result = cv2.matchTemplate(currenticon, checkimage, cv2.TM_CCOEFF_NORMED)
 				threshold = .99
 				if np.amax(result) > threshold:
@@ -764,20 +766,20 @@ def ItemScan(screen, garbage):
 			ThisStockpileName = "Public"
 
 		if menu.CSVExport.get() == 1:
-			stockpilefile = open("Stockpiles//" + ThisStockpileName + ".csv", 'w')
-			stockpilefile.write(ThisStockpileName + ",\n")
-			stockpilefile.write(FoundStockpileTypeName + ",\n")
-			stockpilefile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ",\n")
+			stockpilefile = open("Stockpiles//CSV//" + ThisStockpileName + ".csv", 'w')
+			# stockpilefile.write(ThisStockpileName + ",\n")
+			# stockpilefile.write(FoundStockpileTypeName + ",\n")
+			# stockpilefile.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ",\n")
 			stockpilefile.close()
 
 			# Writing to both csv and xlsx, only the quantity and name is written
 			# If more elements from items.data are added to stockpilecontents, they could be added to these exports as fields
-			with open("Stockpiles//" + ThisStockpileName + ".csv", 'a') as fp:
+			with open("Stockpiles//CSV//" + ThisStockpileName + ".csv", 'a') as fp:
 				# fp.write('\n'.join('{},{},{}'.format(x[0],x[1],x[2]) for x in stockpilecontents))
 				############### THIS ONE DOES IN REGULAR ORDER ############
 				# fp.write('\n'.join('{},{}'.format(x[1],x[2]) for x in stockpilecontents))
 				############### THIS ONE DOES IN SORTED ORDER #############
-				fp.write('\n'.join('{},{}'.format(x[1], x[2]) for x in items.sortedcontents))
+				fp.write('\n'.join('{},{},{},{},{}'.format(ThisStockpileName,FoundStockpileTypeName,str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),x[1], x[2]) for x in items.sortedcontents))
 			fp.close()
 		
 
